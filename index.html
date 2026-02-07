@@ -810,8 +810,21 @@
                 } else {
                     const blurOverlay = document.createElement('div');
                     blurOverlay.className = 'blur-overlay';
-                    blurOverlay.innerHTML = '<div class="lock-icon">🔒</div>';
+                    blurOverlay.id = `blur-${index}`;
+                    
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'particle-canvas';
+                    canvas.id = `particles-${index}`;
+                    blurOverlay.appendChild(canvas);
+                    
+                    const lockIcon = document.createElement('div');
+                    lockIcon.className = 'lock-icon';
+                    lockIcon.textContent = '🔒';
+                    blurOverlay.appendChild(lockIcon);
+                    
                     slide.appendChild(blurOverlay);
+                    
+                    setTimeout(() => initParticles(canvas), 100);
                 }
                 
                 slider.appendChild(slide);
