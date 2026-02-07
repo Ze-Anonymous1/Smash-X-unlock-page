@@ -581,7 +581,7 @@
     </div>
     
     <script>
-        const waveHeights = [0.02, 0.04, 0.07, 0.05, 0.03, 0.06, 0.1, 0.14, 0.17, 0.2, 0.23, 0.25, 0.22, 0.19, 0.15, 0.12, 0.1, 0.08, 0.06, 0.09, 0.13, 0.16, 0.19, 0.21, 0.24, 0.26, 0.29, 0.27, 0.24, 0.2, 0.17, 0.13, 0.1, 0.07, 0.05, 0.08, 0.12, 0.15, 0.11, 0.08, 0.05, 0.03, 0.025, 0.045, 0.075, 0.055, 0.035, 0.065, 0.105, 0.135];
+        const waveHeights = [0.019, 0.033, 0.048, 0.043, 0.057, 0.038, 0.045, 0.026, 0.041];
         
         const urlParams = new URLSearchParams(window.location.search);
         const bundleId = urlParams.get('bundle_id') || 'demo';
@@ -712,12 +712,11 @@
             });
             
             const waveform = document.getElementById('waveform');
-            const containerHeight = waveform.clientHeight || 24; // Get actual container height
             for (let i = 0; i < 50; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'wave-bar';
                 const heightMultiplier = waveHeights[i % waveHeights.length];
-                bar.style.height = `${containerHeight * heightMultiplier}px`;
+                bar.style.height = `${window.innerWidth * heightMultiplier}px`;
                 waveform.appendChild(bar);
             }
             
