@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#141414">
+    <title>Unlock Content - SmashX</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(180deg, rgb(20, 20, 20) 0%, rgb(13, 13, 13) 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-pic {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid white;
+            object-fit: cover;
+        }
+        
+        .header-info {
+            flex: 1;
+        }
+        
+        .username {
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        .message {
+            font-size: 15px;
+            font-weight: 200;
+            opacity: 0.95;
+            margin-top: 2px;
+        }
+        
+        .image-card {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 9/16;
+            border-radius: 28px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+            touch-action: pan-y;
+        }
+        
+        .image-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .blur-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: opacity 0.3s ease;
+        }
+        
+        .lock-icon {
+            font-size: 100px;
+            opacity: 0.3;
+        }
+        
+        .tap-unlock {
+            background: rgba(0, 0, 0, 0.65);
+            padding: 20px 30px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .tap-unlock-icon {
+            font-size: 44px;
+            margin-bottom: 8px;
+        }
+        
+        .tap-unlock-text {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .emoji-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 48px;
+            z-index: 3;
+        }
+        
+        .media-counter {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 3;
+        }
+        
+        .price-badge {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 24px;
+            border-radius: 16px;
+            text-align: center;
+            z-index: 3;
+        }
+        
+        .price-label {
+            font-size: 13px;
+            font-weight: 200;
+            letter-spacing: 1.5px;
+            opacity: 0.95;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        
+        .price-amount {
+            font-size: 48px;
+            font-weight: 200;
+            letter-spacing: 2px;
+        }
+        
+        .dots-indicator {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 3;
+        }
+        
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: background 0.3s;
+        }
+        
+        .dot.active {
+            background: white;
+        }
+        
+        .unlock-button {
+            width: 100%;
+            padding: 20px;
+            background: #22C55E;
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        
+        .unlock-button:active {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        
+        .unlock-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .payment-methods {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .stripe-badge {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 11px;
+            margin-bottom: 30px;
+        }
+        
+        #checkout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        #checkout-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            height: 85vh;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { 
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        #checkout-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="" alt="Profile" class="profile-pic" id="profile-pic">
+            <div class="header-info">
+                <div class="username" id="username">Loading...</div>
+                <div class="message" id="message">Please wait...</div>
+            </div>
+        </div>
+        
+        <div class="image-card">
+            <div class="image-slider" id="slider"></div>
+            
+            <div class="emoji-badge">💋</div>
+            <div class="media-counter">
+                <span>📷</span>
+                <span id="current-image">1</span>/<span id="total-images">0</span> media
+            </div>
+            <div class="price-badge" id="price-badge">
+                <div class="price-label">Unlock For</div>
+                <div class="price-amount" id="price-amount">$0.00</div>
+            </div>
+            <div class="dots-indicator" id="dots-indicator"></div>
+        </div>
+        
+        <button class="unlock-button" id="unlock-btn">Unlock now</button>
+        
+        <div class="payment-methods">
+            <span>💳</span>
+            <span>Apple Pay</span>
+            <span>•</span>
+            <span>🔒</span>
+            <span>Secure Checkout</span>
+        </div>
+        <div class="stripe-badge">
+            Powered by Stripe • Encrypted
+        </div>
+    </div>
+    
+    <div id="checkout-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCheckout()">✕</button>
+            <iframe id="checkout-iframe"></iframe>
+        </div>
+    </div>
+    
+    <script>
+        // Get bundle_id from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bundleId = urlParams.get('bundle_id') || 'demo';
+        
+        let currentSlide = 0;
+        let firstImageUnlocked = false;
+        let bundleData = null;
+        
+        // Fetch bundle data from Supabase
+        async function loadBundleData() {
+            try {
+                // TODO: Replace with actual Supabase API call
+                // For now, using demo data
+                bundleData = {
+                    bundle_id: bundleId,
+                    images: [
+                        'https://via.placeholder.com/400x600/FF69B4/FFFFFF?text=Image+1',
+                        'https://via.placeholder.com/400x600/9370DB/FFFFFF?text=Image+2',
+                        'https://via.placeholder.com/400x600/FF1493/FFFFFF?text=Image+3',
+                        'https://via.placeholder.com/400x600/BA55D3/FFFFFF?text=Image+4',
+                        'https://via.placeholder.com/400x600/FF69B4/FFFFFF?text=Image+5',
+                    ],
+                    price: 15.00,
+                    image_count: 5,
+                    username: 'jessicaRose',
+                    message: 'Just for you baby... unlock to see more 💋',
+                    profile_image: 'https://via.placeholder.com/100/FF69B4/FFFFFF?text=JR'
+                };
+                
+                renderPage();
+            } catch (error) {
+                console.error('Error loading bundle:', error);
+                alert('Failed to load content');
+            }
+        }
+        
+        function renderPage() {
+            document.getElementById('username').textContent = bundleData.username;
+            document.getElementById('message').textContent = bundleData.message;
+            document.getElementById('profile-pic').src = bundleData.profile_image;
+            document.getElementById('total-images').textContent = bundleData.image_count;
+            document.getElementById('price-amount').textContent = '$' + bundleData.price.toFixed(2);
+            
+            const slider = document.getElementById('slider');
+            const dotsContainer = document.getElementById('dots-indicator');
+            
+            bundleData.images.forEach((img, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide' + (index === 0 ? ' active' : '');
+                slide.dataset.index = index;
+                
+                const imgEl = document.createElement('img');
+                imgEl.src = img;
+                imgEl.alt = 'Image ' + (index + 1);
+                slide.appendChild(imgEl);
+                
+                if (index === 0) {
+                    const blurOverlay = document.createElement('div');
+                    blurOverlay.className = 'blur-overlay';
+                    blurOverlay.id = 'blur-0';
+                    blurOverlay.innerHTML = `
+                        <div class="tap-unlock">
+                            <div class="tap-unlock-icon">👆</div>
+                            <div class="tap-unlock-text">Tap to unlock</div>
+                        </div>
+                    `;
+                    blurOverlay.addEventListener('click', unlockFirstImage);
+                    slide.appendChild(blurOverlay);
+                } else {
+                    const blurOverlay = document.createElement('div');
+                    blurOverlay.className = 'blur-overlay';
+                    blurOverlay.innerHTML = '<div class="lock-icon">🔒</div>';
+                    slide.appendChild(blurOverlay);
+                }
+                
+                slider.appendChild(slide);
+                
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (index === 0 ? ' active' : '');
+                dotsContainer.appendChild(dot);
+            });
+            
+            setupSwipe();
+        }
+        
+        function setupSwipe() {
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            const slider = document.getElementById('slider');
+            
+            slider.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            
+            slider.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+            
+            function handleSwipe() {
+                const diff = touchStartX - touchEndX;
+                if (Math.abs(diff) < 50) return;
+                
+                if (diff > 0 && currentSlide < bundleData.image_count - 1) {
+                    changeSlide(currentSlide + 1);
+                } else if (diff < 0 && currentSlide > 0) {
+                    changeSlide(currentSlide - 1);
+                }
+            }
+        }
+        
+        function changeSlide(index) {
+            currentSlide = index;
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+            
+            document.getElementById('current-image').textContent = index + 1;
+        }
+        
+        function unlockFirstImage() {
+            const blur = document.getElementById('blur-0');
+            blur.style.opacity = '0';
+            setTimeout(() => blur.remove(), 300);
+            firstImageUnlocked = true;
+        }
+        
+        document.getElementById('unlock-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('unlock-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>';
+            
+            try {
+                const response = await fetch('https://nsqowxwwtmxvahhmigap.supabase.co/functions/v1/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zcW93eHd3dG14dmFoaG1pZ2FwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyOTQzOTksImV4cCI6MjA4NTg3MDM5OX0.9v6jvmt9XgVDD7YxPDUGwXO0vdkcjNVyYE73MTfHMF4'
+                    },
+                    body: JSON.stringify({
+                        bundle_id: bundleData.bundle_id,
+                        price: bundleData.price,
+                        success_url: window.location.origin + window.location.pathname + '?bundle_id=' + bundleData.bundle_id + '&payment=success',
+                        cancel_url: window.location.origin + window.location.pathname + '?bundle_id=' + bundleData.bundle_id + '&payment=cancel'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.url) {
+                    openCheckout(data.url);
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Unlock now';
+            }
+        });
+        
+        function openCheckout(url) {
+            const modal = document.getElementById('checkout-modal');
+            const iframe = document.getElementById('checkout-iframe');
+            iframe.src = url;
+            modal.classList.add('show');
+        }
+        
+        function closeCheckout() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('show');
+            document.getElementById('checkout-iframe').src = '';
+        }
+        
+        if (urlParams.get('payment') === 'success') {
+            alert('Payment successful! Content unlocked!');
+            document.querySelectorAll('.blur-overlay').forEach(el => {
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 300);
+            });
+            document.getElementById('unlock-btn').textContent = 'Download All';
+            document.getElementById('price-badge').style.display = 'none';
+        }
+        
+        loadBundleData();
+    </script>
+</body>
+</html>
