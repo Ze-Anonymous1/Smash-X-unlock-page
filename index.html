@@ -865,8 +865,11 @@
             }
             
             let animationPhase = 0;
+            const canvasId = canvas.id;
+            
             const animationTimer = setInterval(() => {
-                if (!document.getElementById('blur-0')) {
+                const blurElement = document.getElementById(canvasId.replace('particles', 'blur'));
+                if (!blurElement) {
                     clearInterval(animationTimer);
                     return;
                 }
