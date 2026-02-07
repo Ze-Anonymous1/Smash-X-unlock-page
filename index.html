@@ -130,9 +130,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(13vw);
+            -webkit-backdrop-filter: blur(13vw);
+            background: rgba(0, 0, 0, 0);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -153,6 +153,7 @@
             font-size: 28vw;
             opacity: 0.3;
             text-shadow: 0 1.2vw 2.4vw rgba(0, 0, 0, 0.3);
+            z-index: 1;
         }
         
         .tap-unlock {
@@ -161,6 +162,7 @@
             border-radius: 4vw;
             text-align: center;
             box-shadow: 0 1.5vw 3vw rgba(0, 0, 0, 0.4);
+            z-index: 1;
         }
         
         .tap-unlock-icon {
@@ -208,6 +210,11 @@
             text-align: center;
             z-index: 3;
             box-shadow: 0 1.2vw 2.4vw rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .price-badge.show {
+            display: block;
         }
         
         .price-label {
@@ -238,6 +245,8 @@
         .dot {
             width: 1.4vw;
             height: 1.4vw;
+            min-width: 5px;
+            min-height: 5px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.4);
             transition: background 0.3s;
@@ -289,20 +298,24 @@
         .play-btn.replay svg {
             width: 4.3vw;
             height: 4.3vw;
+            min-width: 16px;
+            min-height: 16px;
         }
         
         .waveform-container {
             flex: 1;
             height: 3.2vh;
-            min-height: 20px;
+            min-height: 24px;
             display: flex;
             align-items: flex-end;
             gap: 0.48vw;
             cursor: pointer;
+            position: relative;
         }
         
         .wave-bar {
-            width: 0.6vw;
+            flex: 1;
+            max-width: 0.6vw;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 0.48vw;
             transition: background 0.05s linear;
@@ -319,6 +332,7 @@
             letter-spacing: 0.19vw;
             color: rgba(255, 255, 255, 0.95);
             min-width: 11.8vw;
+            min-font-size: 18px;
             text-align: right;
             flex-shrink: 0;
             font-variant-numeric: tabular-nums;
@@ -348,21 +362,23 @@
             opacity: 0.5;
         }
         
-        /* Payment Methods - EXACT SwiftUI */
+        /* Payment Methods - EXACT SwiftUI with proper icons */
         .payment-methods {
-            text-align: center;
-            color: gray;
-            font-size: 3.8vw;
-            font-weight: 600;
-            margin-bottom: 1vh;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 1.9vw;
+            color: rgb(128, 128, 128);
+            font-size: 3.8vw;
+            font-weight: 600;
+            margin-bottom: 1vh;
         }
         
-        .payment-methods .icon {
-            font-size: 4.3vw;
+        .payment-methods svg {
+            width: 4.3vw;
+            height: 4.3vw;
+            min-width: 16px;
+            min-height: 16px;
         }
         
         .payment-methods .bullet {
@@ -370,10 +386,13 @@
             opacity: 0.5;
         }
         
-        .payment-methods .secure {
+        .payment-methods .secure-text {
             font-size: 3.6vw;
             font-weight: 500;
-            color: gray;
+        }
+        
+        .payment-methods .lock-icon {
+            color: #22C55E;
         }
         
         .stripe-badge {
@@ -412,9 +431,9 @@
             <div class="image-card">
                 <div class="image-slider" id="slider"></div>
                 
-                <div class="emoji-badge">💋</div>
+                <div class="emoji-badge" id="emoji-badge">💋</div>
                 <div class="media-counter">
-                    <span class="icon">📷</span>
+                    <svg viewBox="0 0 16 16" fill="white"><path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm5 2.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM3 12l3-3 2 2 3-3 3 3H3z"/></svg>
                     <span><span id="current-image">1</span>/<span id="total-images">0</span> media</span>
                 </div>
                 <div class="price-badge" id="price-badge">
@@ -436,12 +455,12 @@
         <button class="unlock-button" id="unlock-btn">Unlock now</button>
         
         <div class="payment-methods">
-            <span class="icon">💳</span>
-            <span class="icon">🍎</span>
+            <svg viewBox="0 0 24 24" fill="rgb(128, 128, 128)"><path d="M3 5h18a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1zm0 2v2h18V7H3zm0 4v6h18v-6H3zm3 3h4v2H6v-2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="rgb(128, 128, 128)"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
             <span>Pay</span>
             <span class="bullet">•</span>
-            <span class="icon">🔒</span>
-            <span class="secure">Secure Checkout</span>
+            <svg viewBox="0 0 16 16" fill="#22C55E" class="lock-icon"><path d="M8 1a3 3 0 013 3v2h1a1 1 0 011 1v7a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1h1V4a3 3 0 013-3zm0 1a2 2 0 00-2 2v2h4V4a2 2 0 00-2-2z"/></svg>
+            <span class="secure-text">Secure Checkout</span>
         </div>
         <div class="stripe-badge">
             Powered by Stripe • Encrypted
@@ -449,7 +468,7 @@
     </div>
     
     <script>
-        // EXACT SwiftUI waveform heights
+        // EXACT SwiftUI waveform heights (15 values repeated)
         const waveHeights = [0.019, 0.033, 0.048, 0.043, 0.057, 0.038, 0.052, 0.028, 0.043, 0.062, 0.036, 0.045, 0.055, 0.026, 0.041];
         
         const urlParams = new URLSearchParams(window.location.search);
@@ -457,9 +476,10 @@
         
         let currentSlide = 0;
         let firstImageUnlocked = false;
+        let allUnlocked = false;
         let bundleData = null;
         
-        // Voice player state - EXACT SwiftUI behavior
+        // Voice player state
         const voicePlayer = {
             isPlaying: false,
             progress: 0,
@@ -471,7 +491,7 @@
             pausedTime: 0
         };
         
-        // Particle system - EXACT SwiftUI implementation
+        // Particle classes
         class TwinkleParticle {
             constructor(id, width, height, isSmall, isGold) {
                 this.id = id;
@@ -480,8 +500,8 @@
                     y: Math.random() * height
                 };
                 this.size = isSmall ? 
-                    (Math.random() * (width * 0.0031 - width * 0.0013) + width * 0.0013) :
-                    (Math.random() * (width * 0.0065 - width * 0.0031) + width * 0.0031);
+                    (Math.random() * (width * 0.0018) + width * 0.0013) :
+                    (Math.random() * (width * 0.0034) + width * 0.0031);
                 this.baseOpacity = Math.random() * 0.4 + 0.3;
                 this.opacity = this.baseOpacity;
                 this.phase = Math.random() * Math.PI * 2;
@@ -499,19 +519,18 @@
         class ExplosionParticle {
             constructor(centerX, centerY, width, isGold) {
                 const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * (width * 1.82 - width * 0.78) + width * 0.78;
+                const distance = Math.random() * (width * 1.04) + width * 0.78;
                 this.startPosition = { x: centerX, y: centerY };
                 this.endPosition = {
                     x: centerX + Math.cos(angle) * distance,
                     y: centerY + Math.sin(angle) * distance
                 };
-                this.size = Math.random() * (width * 0.013 - width * 0.0052) + width * 0.0052;
+                this.size = Math.random() * (width * 0.008) + width * 0.0052;
                 this.color = isGold ? 'rgb(255, 214, 0)' : 'rgb(255, 255, 255)';
                 this.opacity = Math.random() * 0.3 + 0.7;
             }
         }
         
-        // Load bundle data
         async function loadBundleData() {
             try {
                 bundleData = {
@@ -532,7 +551,7 @@
                 
                 renderPage();
             } catch (error) {
-                console.error('Error loading bundle:', error);
+                console.error('Error:', error);
             }
         }
         
@@ -546,7 +565,6 @@
             const slider = document.getElementById('slider');
             const dotsContainer = document.getElementById('dots-indicator');
             
-            // Render images with particle system
             bundleData.images.forEach((img, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'slide' + (index === 0 ? ' active' : '');
@@ -573,7 +591,6 @@
                     blurOverlay.addEventListener('click', () => unlockFirstImage(canvas));
                     slide.appendChild(blurOverlay);
                     
-                    // Start particle animation after a short delay
                     setTimeout(() => initParticles(canvas), 100);
                 } else {
                     const blurOverlay = document.createElement('div');
@@ -589,21 +606,22 @@
                 dotsContainer.appendChild(dot);
             });
             
-            // Create waveform (50 bars)
+            // Waveform: 50 bars with exact heights
             const waveform = document.getElementById('waveform');
+            const vh = window.innerHeight / 100;
             for (let i = 0; i < 50; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'wave-bar';
-                const heightVw = waveHeights[i % waveHeights.length] * 100;
-                bar.style.height = `${heightVw}vw`;
+                const heightMultiplier = waveHeights[i % waveHeights.length];
+                bar.style.height = `${window.innerWidth * heightMultiplier}px`;
                 waveform.appendChild(bar);
             }
             
             setupSwipe();
             setupVoicePlayer();
+            updatePriceBadgeVisibility();
         }
         
-        // Particle animation system - EXACT SwiftUI
         function initParticles(canvas) {
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width;
@@ -612,7 +630,6 @@
             const ctx = canvas.getContext('2d');
             const particles = [];
             
-            // Create 480 particles (240 small, 240 large)
             for (let i = 0; i < 480; i++) {
                 const isSmall = i < 240;
                 const isGold = i % 2 === 0;
@@ -620,7 +637,7 @@
             }
             
             let animationPhase = 0;
-            let animationTimer = setInterval(() => {
+            const animationTimer = setInterval(() => {
                 if (!document.getElementById('blur-0')) {
                     clearInterval(animationTimer);
                     return;
@@ -630,34 +647,28 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
                 particles.forEach(p => {
-                    // Update twinkle
                     const wave = Math.sin(p.phase + animationPhase * p.twinkleSpeed);
                     p.opacity = p.baseOpacity + (wave * 0.3);
                     
-                    // Update position
                     p.position.x += p.velocity.x;
                     p.position.y += p.velocity.y;
                     
-                    // Wrap around
                     if (p.position.x < 0) p.position.x = p.maxWidth;
                     if (p.position.x > p.maxWidth) p.position.x = 0;
                     if (p.position.y < 0) p.position.y = p.maxHeight;
                     if (p.position.y > p.maxHeight) p.position.y = 0;
                     
-                    // Draw particle
                     const color = p.isGold ? 'rgb(255, 214, 0)' : 'rgb(255, 255, 255)';
-                    ctx.fillStyle = color;
-                    ctx.globalAlpha = p.opacity;
                     
-                    // Draw glow if bright and large
                     if (p.opacity > 0.7 && p.size > 1.5) {
+                        ctx.fillStyle = color;
                         ctx.globalAlpha = p.opacity * 0.15;
                         ctx.beginPath();
                         ctx.arc(p.position.x, p.position.y, p.size * 1.3, 0, Math.PI * 2);
                         ctx.fill();
                     }
                     
-                    // Draw particle
+                    ctx.fillStyle = color;
                     ctx.globalAlpha = p.opacity;
                     ctx.beginPath();
                     ctx.arc(p.position.x, p.position.y, p.size, 0, Math.PI * 2);
@@ -665,7 +676,7 @@
                 });
                 
                 ctx.globalAlpha = 1;
-            }, 80); // 0.08 seconds like SwiftUI
+            }, 80);
             
             canvas.dataset.animationTimer = animationTimer;
         }
@@ -675,12 +686,10 @@
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
             
-            // Stop twinkle animation
             if (canvas.dataset.animationTimer) {
                 clearInterval(parseInt(canvas.dataset.animationTimer));
             }
             
-            // Create explosion particles (240 particles)
             const explosionParticles = [];
             for (let i = 0; i < 240; i++) {
                 const isGold = i % 2 === 0;
@@ -697,8 +706,10 @@
                     clearInterval(explosionTimer);
                     const blur = document.getElementById('blur-0');
                     blur.style.opacity = '0';
-                    setTimeout(() => blur.remove(), 300);
-                    firstImageUnlocked = true;
+                    setTimeout(() => {
+                        blur.remove();
+                        firstImageUnlocked = true;
+                    }, 300);
                     return;
                 }
                 
@@ -709,14 +720,12 @@
                     const currentY = p.startPosition.y + (p.endPosition.y - p.startPosition.y) * explosionPhase;
                     const opacity = p.opacity * (1 - explosionPhase);
                     
-                    // Draw glow
                     ctx.fillStyle = p.color;
                     ctx.globalAlpha = opacity * 0.3;
                     ctx.beginPath();
                     ctx.arc(currentX, currentY, p.size * 1.5, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Draw particle
                     ctx.globalAlpha = opacity;
                     ctx.beginPath();
                     ctx.arc(currentX, currentY, p.size, 0, Math.PI * 2);
@@ -724,7 +733,7 @@
                 });
                 
                 ctx.globalAlpha = 1;
-            }, 16); // ~60fps
+            }, 16);
         }
         
         function setupSwipe() {
@@ -758,15 +767,33 @@
                 d.classList.toggle('active', i === index);
             });
             document.getElementById('current-image').textContent = index + 1;
+            updatePriceBadgeVisibility();
         }
         
-        // Voice Player - EXACT SwiftUI behavior
+        function updatePriceBadgeVisibility() {
+            const priceBadge = document.getElementById('price-badge');
+            const emojiBadge = document.getElementById('emoji-badge');
+            
+            // Price badge ONLY shows on images 2-5 when NOT unlocked
+            // Emoji badge ONLY shows when NOT unlocked
+            if (allUnlocked) {
+                priceBadge.classList.remove('show');
+                emojiBadge.style.display = 'none';
+            } else if (currentSlide === 0) {
+                priceBadge.classList.remove('show');
+            } else {
+                priceBadge.classList.add('show');
+            }
+        }
+        
+        // Voice Player
         function setupVoicePlayer() {
             document.getElementById('play-btn').addEventListener('click', togglePlayPause);
             
-            document.getElementById('waveform').addEventListener('click', (e) => {
+            const waveform = document.getElementById('waveform');
+            waveform.addEventListener('click', (e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
-                const progress = (e.clientX - rect.left) / rect.width;
+                const progress = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
                 seek(progress);
             });
         }
@@ -840,7 +867,7 @@
                     voicePlayer.progress = elapsed / voicePlayer.duration;
                     updateVoiceUI();
                 }
-            }, 1000 / 60); // 60fps like SwiftUI
+            }, 1000 / 60);
         }
         
         function stopVoiceTimer() {
@@ -855,7 +882,7 @@
             
             if (voicePlayer.hasFinished) {
                 playBtn.classList.add('replay');
-                playBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="white"><path d="M8 3a5 5 0 015 5h2l-3 3-3-3h2a3 3 0 10-3 3v2a5 5 0 010-10z"/></svg>';
+                playBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="white"><path d="M8 3v2a4 4 0 014 4h2a6 6 0 00-6-6zm0 0V1l-3 3 3 3V5a4 4 0 00-4 4H1a6 6 0 016-6z"/></svg>';
             } else if (voicePlayer.isPlaying) {
                 playBtn.classList.remove('replay');
                 playBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="white"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>';
@@ -889,9 +916,7 @@
                     },
                     body: JSON.stringify({
                         bundle_id: bundleData.bundle_id,
-                        price: bundleData.price,
-                        success_url: window.location.href + '&payment=success',
-                        cancel_url: window.location.href
+                        price: bundleData.price
                     })
                 });
                 
@@ -910,13 +935,13 @@
             }
         });
         
-        // Check for payment success
         if (urlParams.get('payment') === 'success') {
+            allUnlocked = true;
             document.querySelectorAll('.blur-overlay').forEach(el => {
                 el.style.opacity = '0';
                 setTimeout(() => el.remove(), 300);
             });
-            document.getElementById('price-badge').style.display = 'none';
+            updatePriceBadgeVisibility();
         }
         
         loadBundleData();
