@@ -27,19 +27,22 @@
         .container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         
         .header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 12px;
         }
         
         .profile-pic {
-            width: 44px;
-            height: 44px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             border: 2px solid white;
             object-fit: cover;
@@ -50,13 +53,13 @@
         }
         
         .username {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 300;
             letter-spacing: 0.5px;
         }
         
         .message {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 200;
             opacity: 0.95;
             margin-top: 2px;
@@ -65,12 +68,13 @@
         .image-card {
             position: relative;
             width: 100%;
-            aspect-ratio: 9/16;
-            border-radius: 28px;
+            flex: 1;
+            max-height: 65vh;
+            border-radius: 24px;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             touch-action: pan-y;
         }
         
@@ -214,16 +218,16 @@
         
         .unlock-button {
             width: 100%;
-            padding: 20px;
+            padding: 16px;
             background: #22C55E;
             border: none;
             border-radius: 16px;
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 300;
             letter-spacing: 1.5px;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             transition: transform 0.2s, opacity 0.2s;
         }
         
@@ -240,19 +244,19 @@
         .payment-methods {
             text-align: center;
             color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            margin-bottom: 10px;
+            font-size: 12px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .stripe-badge {
             text-align: center;
             color: rgba(255, 255, 255, 0.4);
-            font-size: 11px;
-            margin-bottom: 30px;
+            font-size: 10px;
+            margin-bottom: 15px;
         }
         
         #checkout-modal {
