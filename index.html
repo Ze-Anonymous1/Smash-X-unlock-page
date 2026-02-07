@@ -713,12 +713,12 @@
             });
             
             const waveform = document.getElementById('waveform');
-            const baseScreenWidth = 390; // iPhone 14 Pro width as baseline
+            const containerHeight = waveform.clientHeight || 24;
             for (let i = 0; i < 50; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'wave-bar';
                 const heightMultiplier = waveHeights[i % waveHeights.length];
-                bar.style.height = `${baseScreenWidth * heightMultiplier}px`;
+                bar.style.height = `${containerHeight * (heightMultiplier * 100)}px`;
                 waveform.appendChild(bar);
             }
             
