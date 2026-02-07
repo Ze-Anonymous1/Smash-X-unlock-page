@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#141414">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Unlock Content - SmashX</title>
     <script src="https://js.stripe.com/v3/"></script>
     <style>
+        :root {
+            --vw: 1vw;
+            --vh: 1vh;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -27,25 +33,29 @@
         .container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 15px;
+            padding: calc(var(--vh) * 1.5);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
         
+        /* Header - EXACT SwiftUI measurements */
         .header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: calc(var(--vw) * 3); /* w * 0.03 */
+            margin-bottom: calc(var(--vh) * 1.5);
+            padding: 0 calc(var(--vw) * 5); /* w * 0.05 */
+            padding-top: calc(var(--vh) * 0.8); /* h * 0.008 */
         }
         
         .profile-pic {
-            width: 38px;
-            height: 38px;
+            width: calc(var(--vw) * 11); /* w * 0.11 */
+            height: calc(var(--vw) * 11);
             border-radius: 50%;
-            border: 2px solid white;
+            border: calc(var(--vw) * 0.6) solid white; /* w * 0.006 */
             object-fit: cover;
+            box-shadow: 0 calc(var(--vw) * 0.2) calc(var(--vw) * 0.4) rgba(0, 0, 0, 0.1);
         }
         
         .header-info {
@@ -53,28 +63,31 @@
         }
         
         .username {
-            font-size: 16px;
+            font-size: calc(var(--vw) * 4.6); /* w * 0.046 */
             font-weight: 300;
-            letter-spacing: 0.5px;
+            letter-spacing: calc(var(--vw) * 0.12); /* w * 0.0012 */
+            color: white;
         }
         
         .message {
-            font-size: 13px;
+            font-size: calc(var(--vw) * 3.8); /* w * 0.038 */
             font-weight: 200;
-            opacity: 0.95;
-            margin-top: 2px;
+            letter-spacing: calc(var(--vw) * 0.07); /* w * 0.0007 */
+            color: rgba(255, 255, 255, 0.95);
+            margin-top: calc(var(--vh) * 0.1);
+            line-height: 1.3;
         }
         
+        /* Image Card - EXACT SwiftUI measurements */
         .image-card {
             position: relative;
-            width: 100%;
-            flex: 1;
-            max-height: 65vh;
-            border-radius: 24px;
+            width: calc(var(--vw) * 92); /* w * 0.92 */
+            height: calc(var(--vh) * 66); /* h * 0.66 */
+            border-radius: calc(var(--vw) * 7); /* w * 0.07 */
             overflow: hidden;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            margin: 0 calc(var(--vw) * 4) calc(var(--vh) * 1.5); /* padding h: w * 0.04 */
+            border: calc(var(--vw) * 0.24) solid rgba(255, 255, 255, 0.3); /* w * 0.0024 */
+            box-shadow: 0 calc(var(--vw) * 2.4) calc(var(--vw) * 4.8) rgba(0, 0, 0, 0.2); /* radius: w * 0.048, y: w * 0.024 */
             touch-action: pan-y;
         }
         
@@ -122,91 +135,99 @@
         }
         
         .lock-icon {
-            font-size: 100px;
+            font-size: calc(var(--vw) * 28); /* w * 0.28 */
             opacity: 0.3;
+            text-shadow: 0 calc(var(--vw) * 1.2) calc(var(--vw) * 2.4) rgba(0, 0, 0, 0.3); /* radius: w * 0.024, y: w * 0.012 */
         }
         
         .tap-unlock {
             background: rgba(0, 0, 0, 0.65);
-            padding: 20px 30px;
-            border-radius: 16px;
+            padding: calc(var(--vh) * 2.5) calc(var(--vw) * 7); /* v: h * 0.025, h: w * 0.07 */
+            border-radius: calc(var(--vw) * 4); /* w * 0.04 */
             text-align: center;
+            box-shadow: 0 calc(var(--vw) * 1.5) calc(var(--vw) * 3) rgba(0, 0, 0, 0.4); /* radius: w * 0.03, y: w * 0.015 */
         }
         
         .tap-unlock-icon {
-            font-size: 44px;
-            margin-bottom: 8px;
+            font-size: calc(var(--vw) * 11); /* w * 0.11 */
+            margin-bottom: calc(var(--vh) * 1.2); /* h * 0.012 */
         }
         
         .tap-unlock-text {
-            font-size: 24px;
+            font-size: calc(var(--vw) * 6); /* w * 0.06 */
             font-weight: 600;
-            letter-spacing: 0.5px;
+            letter-spacing: calc(var(--vw) * 0.2); /* w * 0.002 */
         }
         
         .emoji-badge {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 48px;
+            top: 2.8%; /* cardH * 0.028 */
+            right: 3.8%; /* cardW * 0.038 */
+            font-size: calc(var(--vw) * 12); /* w * 0.12 */
             z-index: 3;
         }
         
         .media-counter {
             position: absolute;
-            top: 12px;
-            left: 12px;
+            top: 2.8%;
+            left: 3.8%;
             background: rgba(0, 0, 0, 0.6);
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 13px;
+            padding: calc(var(--vh) * 0.7) calc(var(--vw) * 2.8); /* v: h * 0.007, h: w * 0.028 */
+            border-radius: calc(var(--vw) * 2.4); /* w * 0.024 */
+            font-size: calc(var(--vw) * 3.1); /* w * 0.031 */
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: calc(var(--vw) * 1.2);
             z-index: 3;
+        }
+        
+        .media-counter svg {
+            width: calc(var(--vw) * 2.7); /* w * 0.027 */
+            height: calc(var(--vw) * 2.7);
         }
         
         .price-badge {
             position: absolute;
-            bottom: 60px;
+            bottom: 8.5%; /* cardH * 0.085 */
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.5);
-            padding: 12px 24px;
-            border-radius: 16px;
+            padding: calc(var(--vh) * 1.8) calc(var(--vw) * 5.6); /* v: h * 0.018, h: w * 0.056 */
+            border-radius: calc(var(--vw) * 3.8); /* w * 0.038 */
             text-align: center;
             z-index: 3;
+            box-shadow: 0 calc(var(--vw) * 1.2) calc(var(--vw) * 2.4) rgba(0, 0, 0, 0.3); /* radius: w * 0.024, y: w * 0.012 */
         }
         
         .price-label {
-            font-size: 13px;
-            font-weight: 200;
-            letter-spacing: 1.5px;
+            font-size: calc(var(--vw) * 3.3); /* w * 0.033 */
+            font-weight: 100;
+            letter-spacing: calc(var(--vw) * 0.36); /* w * 0.0036 */
             opacity: 0.95;
             text-transform: uppercase;
-            margin-bottom: 4px;
+            margin-bottom: calc(var(--vh) * 0.6); /* h * 0.006 */
         }
         
         .price-amount {
-            font-size: 48px;
-            font-weight: 200;
-            letter-spacing: 2px;
+            font-size: calc(var(--vw) * 12); /* w * 0.12 */
+            font-weight: 100;
+            letter-spacing: calc(var(--vw) * 0.48); /* w * 0.0048 */
         }
         
         .dots-indicator {
             position: absolute;
-            bottom: 12px;
+            bottom: 2.8%;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 6px;
+            gap: calc(var(--vw) * 1.4); /* w * 0.014 */
             z-index: 3;
         }
         
         .dot {
-            width: 6px;
-            height: 6px;
+            width: calc(var(--vw) * 1.4); /* w * 0.014 */
+            height: calc(var(--vw) * 1.4);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.4);
             transition: background 0.3s;
@@ -216,18 +237,100 @@
             background: white;
         }
         
-        .unlock-button {
-            width: 100%;
-            padding: 16px;
+        /* Voice Note Player - EXACT SwiftUI measurements */
+        .voice-note-player {
+            display: flex;
+            align-items: center;
+            gap: calc(var(--vw) * 2.8); /* w * 0.028 */
+            padding: calc(var(--vh) * 1.1) calc(var(--vw) * 3.8); /* v: h * 0.011, h: w * 0.038 */
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: calc(var(--vw) * 6.8); /* w * 0.068 */
+            box-shadow: 0 calc(var(--vw) * 0.9) calc(var(--vw) * 1.9) rgba(0, 0, 0, 0.1); /* y: w * 0.009, radius: w * 0.019 */
+            margin: 0 calc(var(--vw) * 5) calc(var(--vh) * 1.5);
+        }
+        
+        .play-btn {
+            width: calc(var(--vw) * 10); /* w * 0.10 */
+            height: calc(var(--vw) * 10);
+            min-width: 36px;
+            min-height: 36px;
+            border-radius: 50%;
             background: #22C55E;
             border: none;
-            border-radius: 16px;
-            color: white;
-            font-size: 20px;
-            font-weight: 300;
-            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            margin-bottom: 12px;
+            flex-shrink: 0;
+            transition: transform 0.2s cubic-bezier(0.5, 1, 0.89, 1);
+        }
+        
+        .play-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .play-btn svg {
+            width: calc(var(--vw) * 3.8); /* w * 0.038 for play/pause */
+            height: calc(var(--vw) * 3.8);
+            min-width: 14px;
+            min-height: 14px;
+        }
+        
+        .play-btn.replay svg {
+            width: calc(var(--vw) * 4.3); /* w * 0.043 for replay */
+            height: calc(var(--vw) * 4.3);
+            min-width: 16px;
+            min-height: 16px;
+        }
+        
+        .waveform-container {
+            flex: 1;
+            height: calc(var(--vh) * 3.2); /* h * 0.032 */
+            min-height: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: calc(var(--vw) * 0.48); /* w * 0.0048 */
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .wave-bar {
+            width: calc(var(--vw) * 0.6); /* w * 0.006 */
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: calc(var(--vw) * 0.48); /* w * 0.0048 */
+            transition: background 0.05s linear;
+            min-width: 2px;
+        }
+        
+        .wave-bar.active {
+            background: rgba(34, 197, 94, 0.75);
+        }
+        
+        .time-display {
+            font-size: calc(var(--vw) * 5.2); /* w * 0.052 */
+            min-font-size: 18px;
+            font-weight: 300;
+            letter-spacing: calc(var(--vw) * 0.19); /* w * 0.0019 */
+            color: rgba(255, 255, 255, 0.95);
+            min-width: calc(var(--vw) * 11.8); /* w * 0.118 */
+            text-align: right;
+            flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Unlock Button - EXACT SwiftUI measurements */
+        .unlock-button {
+            width: calc(100% - calc(var(--vw) * 10)); /* minus horizontal padding */
+            padding: calc(var(--vh) * 2) 0; /* h * 0.02 */
+            background: #22C55E;
+            border: none;
+            border-radius: calc(var(--vw) * 3.8); /* w * 0.038 */
+            color: white;
+            font-size: calc(var(--vw) * 6.2); /* w * 0.062 */
+            font-weight: 300;
+            letter-spacing: calc(var(--vw) * 0.36); /* w * 0.0036 */
+            cursor: pointer;
+            margin: 0 calc(var(--vw) * 5) calc(var(--vh) * 1.5);
             transition: transform 0.2s, opacity 0.2s;
         }
         
@@ -241,156 +344,78 @@
             cursor: not-allowed;
         }
         
+        /* Payment Methods - EXACT SwiftUI measurements */
         .payment-methods {
             text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
-            margin-bottom: 6px;
+            color: gray;
+            font-size: calc(var(--vw) * 3.8); /* w * 0.038 */
+            font-weight: 600;
+            margin-bottom: calc(var(--vh) * 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: calc(var(--vw) * 1.9); /* w * 0.019 */
+        }
+        
+        .payment-methods svg, .payment-methods img {
+            width: calc(var(--vw) * 4.3); /* w * 0.043 */
+            height: calc(var(--vw) * 4.3);
+        }
+        
+        .payment-methods .bullet {
+            font-size: calc(var(--vw) * 3.3); /* w * 0.033 */
+            opacity: 0.5;
+        }
+        
+        .payment-methods .secure {
+            font-size: calc(var(--vw) * 3.6); /* w * 0.036 */
+            font-weight: 500;
         }
         
         .stripe-badge {
             text-align: center;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 10px;
-            margin-bottom: 15px;
+            color: rgba(128, 128, 128, 0.7);
+            font-size: calc(var(--vw) * 2.8); /* w * 0.028 */
+            margin-bottom: calc(var(--vh) * 2); /* h * 0.02 */
         }
         
-        /* Voice Note Player */
-        .voice-note-player {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
-            background: rgba(34, 197, 94, 0.2);
-            border-radius: 25px;
-            margin-bottom: 12px;
+        /* Apple Pay / Payment Sheet */
+        #payment-sheet {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            z-index: 10000;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 70vh;
+            overflow-y: auto;
         }
         
-        .play-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #22C55E;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
+        #payment-sheet.show {
+            display: block;
+            transform: translateY(0);
         }
         
-        .play-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .waveform {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            height: 24px;
-        }
-        
-        .wave-bar {
-            width: 3px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 2px;
-            transition: background 0.1s;
-        }
-        
-        .wave-bar.active {
-            background: #22C55E;
-        }
-        
-        .time-display {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.95);
-            font-weight: 300;
-            letter-spacing: 0.5px;
-            min-width: 36px;
-            text-align: right;
-            flex-shrink: 0;
-        }
-        
-        #checkout-modal {
+        #payment-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
             z-index: 9999;
-            animation: fadeIn 0.3s ease;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        #payment-overlay.show {
+            display: block;
         }
         
-        #checkout-modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .modal-content {
-            width: 100%;
-            max-width: 500px;
-            height: 85vh;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            animation: slideUp 0.3s ease;
-        }
-        
-        @keyframes slideUp {
-            from { 
-                transform: translateY(100px);
-                opacity: 0;
-            }
-            to { 
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.6);
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-        
-        .modal-close:hover {
-            background: rgba(0, 0, 0, 0.8);
-        }
-        
-        #checkout-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         .loading {
             display: inline-block;
             width: 20px;
@@ -421,8 +446,8 @@
             
             <div class="emoji-badge">💋</div>
             <div class="media-counter">
-                <span>📷</span>
-                <span id="current-image">1</span>/<span id="total-images">0</span> media
+                <svg viewBox="0 0 16 16" fill="white"><path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm5 2.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM3 12l3-3 2 2 3-3 3 3H3z"/></svg>
+                <span><span id="current-image">1</span>/<span id="total-images">0</span> media</span>
             </div>
             <div class="price-badge" id="price-badge">
                 <div class="price-label">Unlock For</div>
@@ -434,36 +459,38 @@
         <!-- Voice Note Player -->
         <div class="voice-note-player" id="voice-player">
             <button class="play-btn" id="play-btn">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="white">
-                    <path d="M3 2L13 8L3 14V2Z"/>
-                </svg>
+                <svg viewBox="0 0 16 16" fill="white"><path d="M4 2l10 6-10 6V2z"/></svg>
             </button>
-            <div class="waveform" id="waveform"></div>
+            <div class="waveform-container" id="waveform"></div>
             <div class="time-display" id="time-display">0:10</div>
         </div>
         
         <button class="unlock-button" id="unlock-btn">Unlock now</button>
         
         <div class="payment-methods">
-            <span>💳</span>
-            <span>Apple Pay</span>
-            <span>•</span>
-            <span>🔒</span>
-            <span>Secure Checkout</span>
+            <svg viewBox="0 0 16 16" fill="gray"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v1H1V4zm0 3v5a1 1 0 001 1h12a1 1 0 001-1V7H1zm3 3a1 1 0 011-1h2a1 1 0 110 2H5a1 1 0 01-1-1z"/></svg>
+            <svg viewBox="0 0 16 16" fill="gray"><path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0-1A6 6 0 108 2a6 6 0 000 12zm-1-9h2v5H7V5zm0 6h2v2H7v-2z"/></svg>
+            <span>Pay</span>
+            <span class="bullet">•</span>
+            <svg viewBox="0 0 16 16" fill="#22C55E"><path d="M8 1a3 3 0 013 3v2h1a1 1 0 011 1v7a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1h1V4a3 3 0 013-3zm0 1a2 2 0 00-2 2v2h4V4a2 2 0 00-2-2z"/></svg>
+            <span class="secure">Secure Checkout</span>
         </div>
         <div class="stripe-badge">
             Powered by Stripe • Encrypted
         </div>
     </div>
     
-    <div id="checkout-modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeCheckout()">✕</button>
-            <iframe id="checkout-iframe"></iframe>
-        </div>
+    <!-- Payment Sheet for Apple Pay / Google Pay -->
+    <div id="payment-overlay"></div>
+    <div id="payment-sheet">
+        <div id="payment-element"></div>
+        <button id="submit-payment" style="display:none;">Pay Now</button>
     </div>
     
     <script>
+        // Exact SwiftUI waveform heights (15 values, repeated for 50 bars)
+        const waveHeights = [0.019, 0.033, 0.048, 0.043, 0.057, 0.038, 0.052, 0.028, 0.043, 0.062, 0.036, 0.045, 0.055, 0.026, 0.041];
+        
         // Get bundle_id from URL
         const urlParams = new URLSearchParams(window.location.search);
         const bundleId = urlParams.get('bundle_id') || 'demo';
@@ -471,12 +498,24 @@
         let currentSlide = 0;
         let firstImageUnlocked = false;
         let bundleData = null;
+        let stripe = Stripe('pk_live_51SSrfQQ9FwXMFPPFVOCWpeQVtYV2jQuo7i3jvv5eq48RdAlui6W8RgicXQk8njjZo0rFdacDE5GqckwTK3m1cWiM004G40ABSh');
         
-        // Fetch bundle data from Supabase
+        // Voice player state
+        const voicePlayer = {
+            isPlaying: false,
+            progress: 0,
+            currentTime: 0,
+            hasFinished: false,
+            duration: 10.0,
+            timer: null,
+            startTime: null,
+            pausedTime: 0
+        };
+        
+        // Load bundle data
         async function loadBundleData() {
             try {
                 // TODO: Replace with actual Supabase API call
-                // For now, using demo data
                 bundleData = {
                     bundle_id: bundleId,
                     images: [
@@ -510,6 +549,7 @@
             const slider = document.getElementById('slider');
             const dotsContainer = document.getElementById('dots-indicator');
             
+            // Render images
             bundleData.images.forEach((img, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'slide' + (index === 0 ? ' active' : '');
@@ -546,7 +586,18 @@
                 dotsContainer.appendChild(dot);
             });
             
+            // Create waveform (50 bars)
+            const waveform = document.getElementById('waveform');
+            for (let i = 0; i < 50; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'wave-bar';
+                const heightMultiplier = waveHeights[i % waveHeights.length];
+                bar.style.height = `calc(var(--vw) * ${heightMultiplier * 100})`;
+                waveform.appendChild(bar);
+            }
+            
             setupSwipe();
+            setupVoicePlayer();
         }
         
         function setupSwipe() {
@@ -599,13 +650,138 @@
             firstImageUnlocked = true;
         }
         
+        // Voice Player - EXACT SwiftUI behavior
+        function setupVoicePlayer() {
+            const playBtn = document.getElementById('play-btn');
+            const waveform = document.getElementById('waveform');
+            
+            playBtn.addEventListener('click', togglePlayPause);
+            
+            waveform.addEventListener('click', (e) => {
+                const rect = waveform.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const progress = x / rect.width;
+                seek(progress);
+            });
+        }
+        
+        function togglePlayPause() {
+            if (voicePlayer.hasFinished) {
+                replay();
+            } else if (voicePlayer.isPlaying) {
+                pause();
+            } else {
+                play();
+            }
+        }
+        
+        function play() {
+            voicePlayer.isPlaying = true;
+            voicePlayer.hasFinished = false;
+            voicePlayer.startTime = Date.now() - (voicePlayer.pausedTime * 1000);
+            startTimer();
+            updateVoiceUI();
+        }
+        
+        function pause() {
+            voicePlayer.isPlaying = false;
+            voicePlayer.pausedTime = voicePlayer.currentTime;
+            stopTimer();
+            updateVoiceUI();
+        }
+        
+        function replay() {
+            voicePlayer.currentTime = 0;
+            voicePlayer.progress = 0;
+            voicePlayer.pausedTime = 0;
+            voicePlayer.hasFinished = false;
+            voicePlayer.startTime = Date.now();
+            voicePlayer.isPlaying = true;
+            startTimer();
+            updateVoiceUI();
+        }
+        
+        function seek(newProgress) {
+            const seekTime = newProgress * voicePlayer.duration;
+            voicePlayer.progress = newProgress;
+            voicePlayer.currentTime = seekTime;
+            voicePlayer.pausedTime = seekTime;
+            voicePlayer.hasFinished = false;
+            
+            if (voicePlayer.isPlaying) {
+                voicePlayer.startTime = Date.now() - (seekTime * 1000);
+            }
+            updateVoiceUI();
+        }
+        
+        function startTimer() {
+            stopTimer();
+            // 60fps like SwiftUI
+            voicePlayer.timer = setInterval(() => {
+                if (!voicePlayer.isPlaying) return;
+                
+                const elapsed = (Date.now() - voicePlayer.startTime) / 1000;
+                
+                if (elapsed >= voicePlayer.duration) {
+                    voicePlayer.currentTime = voicePlayer.duration;
+                    voicePlayer.progress = 1.0;
+                    voicePlayer.isPlaying = false;
+                    voicePlayer.hasFinished = true;
+                    voicePlayer.pausedTime = 0;
+                    stopTimer();
+                    updateVoiceUI();
+                } else {
+                    voicePlayer.currentTime = elapsed;
+                    voicePlayer.progress = elapsed / voicePlayer.duration;
+                    updateVoiceUI();
+                }
+            }, 1000 / 60);
+        }
+        
+        function stopTimer() {
+            if (voicePlayer.timer) {
+                clearInterval(voicePlayer.timer);
+                voicePlayer.timer = null;
+            }
+        }
+        
+        function updateVoiceUI() {
+            const playBtn = document.getElementById('play-btn');
+            const waveBars = document.querySelectorAll('.wave-bar');
+            const timeDisplay = document.getElementById('time-display');
+            
+            // Update button icon
+            if (voicePlayer.hasFinished) {
+                playBtn.classList.add('replay');
+                playBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="white"><path d="M2 8a6 6 0 1112 0A6 6 0 012 8zm6-4v4l3 2-1 1.5-4-2.5V4h2z"/></svg>';
+            } else if (voicePlayer.isPlaying) {
+                playBtn.classList.remove('replay');
+                playBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="white"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>';
+            } else {
+                playBtn.classList.remove('replay');
+                playBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="white"><path d="M4 2l10 6-10 6V2z"/></svg>';
+            }
+            
+            // Update waveform progress
+            const activeCount = Math.floor(voicePlayer.progress * waveBars.length);
+            waveBars.forEach((bar, i) => {
+                bar.classList.toggle('active', i < activeCount);
+            });
+            
+            // Update time display
+            const timeLeft = Math.ceil(voicePlayer.duration - voicePlayer.currentTime);
+            timeDisplay.textContent = '0:' + String(timeLeft).padStart(2, '0');
+        }
+        
+        // Apple Pay / Google Pay Integration
         document.getElementById('unlock-btn').addEventListener('click', async () => {
             const btn = document.getElementById('unlock-btn');
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span>';
             
             try {
-                const response = await fetch('https://nsqowxwwtmxvahhmigap.supabase.co/functions/v1/create-checkout-session', {
+                // Create Payment Intent
+                const response = await fetch('https://nsqowxwwtmxvahhmigap.supabase.co/functions/v1/create-payment-intent', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -613,19 +789,20 @@
                     },
                     body: JSON.stringify({
                         bundle_id: bundleData.bundle_id,
-                        price: bundleData.price,
-                        success_url: window.location.origin + window.location.pathname + '?bundle_id=' + bundleData.bundle_id + '&payment=success',
-                        cancel_url: window.location.origin + window.location.pathname + '?bundle_id=' + bundleData.bundle_id + '&payment=cancel'
+                        amount: Math.round(bundleData.price * 100)
                     })
                 });
                 
-                const data = await response.json();
+                const { clientSecret } = await response.json();
                 
-                if (data.url) {
-                    openCheckout(data.url);
-                } else {
-                    throw new Error('No checkout URL received');
-                }
+                // Show payment sheet with Apple Pay / Google Pay
+                const elements = stripe.elements({ clientSecret });
+                const paymentElement = elements.create('payment');
+                paymentElement.mount('#payment-element');
+                
+                document.getElementById('payment-overlay').classList.add('show');
+                document.getElementById('payment-sheet').classList.add('show');
+                
             } catch (error) {
                 console.error('Payment error:', error);
                 alert('Payment failed. Please try again.');
@@ -635,82 +812,13 @@
             }
         });
         
-        function openCheckout(url) {
-            const modal = document.getElementById('checkout-modal');
-            const iframe = document.getElementById('checkout-iframe');
-            iframe.src = url;
-            modal.classList.add('show');
-        }
-        
-        function closeCheckout() {
-            const modal = document.getElementById('checkout-modal');
-            modal.classList.remove('show');
-            document.getElementById('checkout-iframe').src = '';
-        }
-        
-        if (urlParams.get('payment') === 'success') {
-            alert('Payment successful! Content unlocked!');
-            document.querySelectorAll('.blur-overlay').forEach(el => {
-                el.style.opacity = '0';
-                setTimeout(() => el.remove(), 300);
-            });
-            document.getElementById('unlock-btn').textContent = 'Download All';
-            document.getElementById('price-badge').style.display = 'none';
-        }
-        
-        loadBundleData();
-        
-        // Voice note player functionality
-        const playBtn = document.getElementById('play-btn');
-        const waveform = document.getElementById('waveform');
-        const timeDisplay = document.getElementById('time-display');
-        let isPlaying = false;
-        let progress = 0;
-        
-        // Create waveform bars
-        const waveBars = [];
-        const barHeights = [8, 14, 20, 16, 22, 12, 18, 10, 16, 24, 12, 16, 20, 10, 14, 18, 8, 20, 14, 10];
-        for (let i = 0; i < 40; i++) {
-            const bar = document.createElement('div');
-            bar.className = 'wave-bar';
-            bar.style.height = barHeights[i % barHeights.length] + 'px';
-            waveform.appendChild(bar);
-            waveBars.push(bar);
-        }
-        
-        playBtn.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            if (isPlaying) {
-                playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="white"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>';
-                animateWaveform();
-            } else {
-                playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="white"><path d="M3 2L13 8L3 14V2Z"/></svg>';
-            }
+        // Close payment sheet on overlay click
+        document.getElementById('payment-overlay').addEventListener('click', () => {
+            document.getElementById('payment-overlay').classList.remove('show');
+            document.getElementById('payment-sheet').classList.remove('show');
         });
         
-        function animateWaveform() {
-            if (!isPlaying) return;
-            
-            progress += 0.025;
-            if (progress >= 1) {
-                progress = 0;
-                isPlaying = false;
-                playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="white"><path d="M3 2L13 8L3 14V2Z"/></svg>';
-                waveBars.forEach(bar => bar.classList.remove('active'));
-                timeDisplay.textContent = '0:10';
-                return;
-            }
-            
-            const activeIndex = Math.floor(progress * waveBars.length);
-            waveBars.forEach((bar, i) => {
-                bar.classList.toggle('active', i <= activeIndex);
-            });
-            
-            const timeLeft = Math.ceil((1 - progress) * 10);
-            timeDisplay.textContent = '0:' + String(timeLeft).padStart(2, '0');
-            
-            requestAnimationFrame(animateWaveform);
-        }
+        loadBundleData();
     </script>
 </body>
 </html>
