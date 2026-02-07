@@ -1070,7 +1070,7 @@
             }
         }
 
-        // Payment with Apple Pay / Google Pay
+        // Payment with Express Checkout (Apple Pay / Google Pay)
         document.getElementById('unlock-btn').addEventListener('click', async () => {
             const btn = document.getElementById('unlock-btn');
             btn.disabled = true;
@@ -1096,89 +1096,54 @@
                     throw new Error('Failed to retrieve payment client secret.');
                 }
 
-                // 2. Create a payment request object
-                const paymentRequest = stripe.paymentRequest({
-                    country: 'US', // Set this to your country
+                // 2. Initialize Stripe Elements with Express Checkout
+                const options = {
+                    mode: 'payment',
+                    amount: Math.round(bundleData.price * 100),
                     currency: 'usd',
-                    total: {
-                        label: 'Unlock Content',
-                        amount: Math.round(bundleData.price * 100),
-                    },
-                    requestPayerName: false,
-                    requestPayerEmail: false,
+                    appearance: {
+                        theme: 'night'
+                    }
+                };
+                
+                elements = stripe.elements(options);
+                
+                // 3. Create Express Checkout Element (replaces Payment Request Button)
+                const expressCheckoutElement = elements.create('expressCheckout', {
+                    buttonHeight: 48,
+                    buttonTheme: {
+                        applePay: 'black',
+                        googlePay: 'black'
+                    }
+                });
+                
+                // 4. Mount and handle payment
+                expressCheckoutElement.on('confirm', async (event) => {
+                    const {error: submitError} = await elements.submit();
+                    if (submitError) {
+                        return;
+                    }
+
+                    const {error} = await stripe.confirmPayment({
+                        elements,
+                        clientSecret,
+                        confirmParams: {
+                            return_url: window.location.href.split('?')[0] + '?bundle_id=' + bundleData.bundle_id + '&payment=success',
+                        },
+                    });
+
+                    if (error) {
+                        console.error(error);
+                    }
                 });
 
-                // 3. Check if the user can make a payment
-                const result = await paymentRequest.canMakePayment();
+                // Mount Express Checkout in the payment element div
+                expressCheckoutElement.mount('#payment-element');
+                document.getElementById('payment-modal').classList.add('show');
                 
-                if (result) {
-                     // The browser supports Apple Pay or Google Pay.
-                    paymentRequest.show();
+                btn.disabled = false;
+                btn.textContent = 'Unlock now';
 
-                    paymentRequest.on('paymentmethod', async (ev) => {
-                        // Confirm the PaymentIntent with the payment method returned from the payment request.
-                        const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(
-                            clientSecret,
-                            { payment_method: ev.paymentMethod.id },
-                            { handleActions: false }
-                        );
-
-                        if (confirmError) {
-                            // Report to the browser that the payment failed.
-                            ev.complete('fail');
-                            alert(confirmError.message);
-                        } else {
-                            // Report to the browser that the confirmation was successful, pending anything else
-                            ev.complete('success');
-                            // Check if the PaymentIntent requires any further actions.
-                            if (paymentIntent.status === "requires_action") {
-                                // Pop up a 3D Secure modal/redirect if required
-                                const { error: actionError } = await stripe.confirmCardPayment(clientSecret);
-                                if (actionError) {
-                                    alert('Payment failed: ' + actionError.message);
-                                } else {
-                                    handleSuccessfulPayment();
-                                }
-                            } else {
-                                // Payment is successful.
-                                handleSuccessfulPayment();
-                            }
-                        }
-                    });
-                    
-                    // Re-enable the button after setup is complete
-                    btn.disabled = false;
-                    btn.textContent = 'Unlock now';
-
-                } else {
-                    // Fallback to the payment sheet modal
-                    elements = stripe.elements({ clientSecret });
-                    paymentElement = elements.create('payment');
-                    paymentElement.mount('#payment-element');
-
-                    document.getElementById('payment-modal').classList.add('show');
-                    btn.disabled = false;
-                    btn.textContent = 'Unlock now';
-
-                    document.getElementById('submit-btn').onclick = async () => {
-                        const submitBtn = document.getElementById('submit-btn');
-                        submitBtn.disabled = true;
-                        submitBtn.innerHTML = '<span class="loading"></span>';
-
-                        const { error } = await stripe.confirmPayment({
-                            elements,
-                            confirmParams: {
-                                return_url: window.location.href.split('?')[0] + '?bundle_id=' + bundleData.bundle_id + '&payment=success',
-                            },
-                        });
-
-                        if (error) {
-                            alert(error.message);
-                            submitBtn.disabled = false;
-                            submitBtn.textContent = 'Pay Now';
-                        }
-                    };
-                }
             } catch (error) {
                 console.error('Payment error:', error);
                 alert('Payment failed. Please try again.');
