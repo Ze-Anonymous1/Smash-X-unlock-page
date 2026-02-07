@@ -23,7 +23,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(180deg, rgb(20, 20, 20) 0%, rgb(13, 13, 13) 100%);
+            background: rgb(13, 13, 13);
             color: white;
             -webkit-font-smoothing: antialiased;
             position: fixed;
@@ -37,141 +37,15 @@
         }
         
         .container {
-            max-width: 600px;
             width: 100%;
-            margin: 0 auto;
             height: 100vh;
+            max-width: 100%;
             max-height: 100vh;
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             background: linear-gradient(180deg, rgb(20, 20, 20) 0%, rgb(13, 13, 13) 100%);
             padding-top: 2vh;
-        }
-
-        @media (min-width: 768px) {
-            body {
-                padding: 0;
-            }
-
-            .container {
-                max-width: 500px;
-                max-height: 100vh;
-                height: 100vh;
-                border-radius: 0;
-                box-shadow: none;
-                border: none;
-                padding-top: 20px;
-            }
-
-            .header {
-                padding: 0 30px;
-                margin-bottom: 15px;
-                gap: 15px;
-            }
-
-            .profile-pic {
-                width: 50px;
-                height: 50px;
-                border: 2px solid white;
-            }
-
-            .username {
-                font-size: 20px;
-            }
-
-            .message {
-                font-size: 16px;
-            }
-
-            .image-card-wrapper {
-                height: 50vh;
-                padding: 0 30px;
-                margin-bottom: 15px;
-            }
-
-            .tap-unlock {
-                padding: 15px 30px;
-            }
-
-            .tap-unlock-icon {
-                font-size: 50px;
-                margin-bottom: 10px;
-            }
-
-            .tap-unlock-text {
-                font-size: 22px;
-            }
-
-            .emoji-badge {
-                font-size: 50px;
-            }
-
-            .media-counter {
-                font-size: 12px;
-                padding: 6px 12px;
-                border-radius: 10px;
-            }
-
-            .price-label {
-                font-size: 13px;
-            }
-
-            .price-amount {
-                font-size: 40px;
-            }
-
-            .voice-note-player {
-                margin: 0 30px 15px;
-                padding: 10px 20px;
-            }
-
-            .play-btn {
-                width: 45px;
-                height: 45px;
-                min-width: 45px;
-                min-height: 45px;
-            }
-
-            .play-btn svg {
-                width: 18px;
-                height: 18px;
-                min-width: 18px;
-                min-height: 18px;
-            }
-
-            .waveform-container {
-                height: 28px;
-                min-height: 28px;
-            }
-
-            .time-display {
-                font-size: 20px;
-                min-width: 50px;
-            }
-
-            .unlock-button {
-                font-size: 22px;
-                padding: 14px 0;
-                margin: 0 30px 15px;
-            }
-
-            .payment-methods {
-                font-size: 15px;
-                margin-bottom: 10px;
-            }
-
-            .payment-methods svg {
-                width: 16px;
-                height: 16px;
-                min-width: 16px;
-                min-height: 16px;
-            }
-
-            .stripe-badge {
-                font-size: 11px;
-                margin-bottom: 15px;
-            }
         }
         
         .header {
@@ -422,7 +296,7 @@
             height: 4.3vw;
             min-width: 16px;
             min-height: 16px;
-            margin-left: 0.8vw; /* Nudge for centering */
+            margin-left: 0.8vw;
         }
 
         .play-btn.playing svg {
@@ -827,7 +701,7 @@
             });
             
             const waveform = document.getElementById('waveform');
-            const baseScreenWidth = 390; // iPhone 14 Pro width as baseline
+            const baseScreenWidth = 390;
             for (let i = 0; i < 50; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'wave-bar';
@@ -1011,7 +885,6 @@
             
             const handleSeek = (e) => {
                 const rect = waveform.getBoundingClientRect();
-                // Use the first touch point if it's a touch event
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const progress = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
                 seek(progress);
@@ -1019,7 +892,7 @@
 
             waveform.addEventListener('touchstart', (e) => {
                 isDragging = true;
-                handleSeek(e); // Seek immediately on touch down
+                handleSeek(e);
             }, { passive: true });
 
             waveform.addEventListener('touchmove', (e) => {
@@ -1032,7 +905,6 @@
                 isDragging = false;
             });
             
-            // Mouse events for desktop browsers
             waveform.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 handleSeek(e);
@@ -1092,7 +964,7 @@
         
         function seek(progress) {
             const wasPlaying = voicePlayer.isPlaying;
-            if (wasPlaying) pause(); // Pause playback while seeking
+            if (wasPlaying) pause();
 
             const seekTime = progress * voicePlayer.duration;
             voicePlayer.progress = progress;
@@ -1100,10 +972,9 @@
             voicePlayer.pausedTime = seekTime;
             voicePlayer.hasFinished = false;
 
-            updateVoiceUI(); // Update UI immediately to new position
+            updateVoiceUI();
             
             if (wasPlaying) {
-                // Resume playback after a short delay to ensure UI updates
                 setTimeout(() => {
                     voicePlayer.startTime = Date.now() - (seekTime * 1000);
                     play();
@@ -1184,14 +1055,12 @@
             }
         }
 
-        // Payment with Payment Element + Link (SIMPLE & WORKS)
         document.getElementById('unlock-btn').addEventListener('click', async () => {
             const btn = document.getElementById('unlock-btn');
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span>';
 
             try {
-                // 1. Create Payment Intent
                 const response = await fetch('https://nsqowxwwtmxvahhmigap.supabase.co/functions/v1/create-payment-intent', {
                     method: 'POST',
                     headers: {
@@ -1210,7 +1079,6 @@
                     throw new Error('Failed to create payment');
                 }
 
-                // 2. Create Payment Element with Link enabled
                 const appearance = {
                     theme: 'night',
                     variables: {
@@ -1234,7 +1102,6 @@
 
                 paymentElement.mount('#payment-element');
 
-                // 3. Show modal
                 document.getElementById('payment-modal').classList.add('show');
                 
                 btn.disabled = false;
@@ -1248,7 +1115,6 @@
             }
         });
 
-        // Handle payment submission
         document.getElementById('submit-btn').addEventListener('click', async () => {
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
