@@ -181,8 +181,7 @@
         }
         
         .tap-unlock-icon {
-            width: 11vw;
-            height: 11vw;
+            font-size: 11vw;
             margin-bottom: 1.2vh;
         }
         
@@ -333,16 +332,16 @@
             min-height: 24px;
             display: flex;
             align-items: flex-end;
-            gap: 0.6vw;
+            gap: 0.48vw;
             cursor: pointer;
         }
         
         .wave-bar {
+            flex: 1;
+            max-width: 0.6vw;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 0.48vw;
             transition: background 0.05s linear;
-            width: 1vw;
-            max-width: 4px;
             min-width: 2px;
         }
         
@@ -1033,7 +1032,7 @@
 
             if (voicePlayer.hasFinished) {
                 playBtn.classList.add('replay');
-                playBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                playBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
                     <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
                 </svg>`;
