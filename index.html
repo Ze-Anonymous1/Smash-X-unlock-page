@@ -1070,14 +1070,14 @@
             }
         }
 
-        // Payment with Express Checkout (Apple Pay / Google Pay)
+        // Payment with Express Checkout (Apple Pay / Google Pay) - PROPER IMPLEMENTATION
         document.getElementById('unlock-btn').addEventListener('click', async () => {
             const btn = document.getElementById('unlock-btn');
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span>';
 
             try {
-                // 1. Create Payment Intent from your backend
+                // 1. Create Checkout Session from your backend
                 const response = await fetch('https://nsqowxwwtmxvahhmigap.supabase.co/functions/v1/create-payment-intent', {
                     method: 'POST',
                     headers: {
@@ -1093,52 +1093,29 @@
                 const { clientSecret } = await response.json();
 
                 if (!clientSecret) {
-                    throw new Error('Failed to retrieve payment client secret.');
+                    throw new Error('Failed to retrieve checkout session.');
                 }
 
-                // 2. Initialize Stripe Elements with Express Checkout
-                const options = {
-                    mode: 'payment',
-                    amount: Math.round(bundleData.price * 100),
-                    currency: 'usd',
-                    appearance: {
-                        theme: 'night'
-                    }
-                };
-                
-                elements = stripe.elements(options);
-                
-                // 3. Create Express Checkout Element (replaces Payment Request Button)
-                const expressCheckoutElement = elements.create('expressCheckout', {
-                    buttonHeight: 48,
-                    buttonTheme: {
-                        applePay: 'black',
-                        googlePay: 'black'
-                    }
-                });
-                
-                // 4. Mount and handle payment
-                expressCheckoutElement.on('confirm', async (event) => {
-                    const {error: submitError} = await elements.submit();
-                    if (submitError) {
-                        return;
-                    }
-
-                    const {error} = await stripe.confirmPayment({
-                        elements,
-                        clientSecret,
-                        confirmParams: {
-                            return_url: window.location.href.split('?')[0] + '?bundle_id=' + bundleData.bundle_id + '&payment=success',
-                        },
-                    });
-
-                    if (error) {
-                        console.error(error);
-                    }
+                // 2. Initialize Checkout with the session
+                const checkout = await stripe.initCheckout({
+                    clientSecret: clientSecret
                 });
 
-                // Mount Express Checkout in the payment element div
+                // 3. Create Express Checkout Element
+                const expressCheckoutElement = checkout.createExpressCheckoutElement();
+
+                // 4. Mount the Express Checkout Element
                 expressCheckoutElement.mount('#payment-element');
+
+                // 5. Handle payment confirmation
+                const loadActionsResult = await checkout.loadActions();
+                if (loadActionsResult.type === 'success') {
+                    expressCheckoutElement.on('confirm', (event) => {
+                        loadActionsResult.actions.confirm({expressCheckoutConfirmEvent: event});
+                    });
+                }
+
+                // Show the payment modal
                 document.getElementById('payment-modal').classList.add('show');
                 
                 btn.disabled = false;
