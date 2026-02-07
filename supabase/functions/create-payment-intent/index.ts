@@ -20,24 +20,13 @@ serve(async (req) => {
 
     const { bundle_id, amount } = await req.json()
 
-    // Create a Checkout Session with ui_mode=custom for Express Checkout Element
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: 'custom',
-      mode: 'payment',
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'Unlock Content',
-              description: `Bundle: ${bundle_id}`,
-            },
-            unit_amount: amount,
-          },
-          quantity: 1,
-        },
-      ],
-      return_url: `https://smashx.fun/?bundle_id=${bundle_id}&payment=success`,
+    // Create a PaymentIntent with automatic payment methods
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: 'usd',
+      automatic_payment_methods: {
+        enabled: true,
+      },
       metadata: {
         bundle_id: bundle_id,
       },
@@ -45,7 +34,7 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        clientSecret: session.client_secret,
+        clientSecret: paymentIntent.client_secret,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
