@@ -921,6 +921,7 @@
         }
         
         function togglePlayPause() {
+            console.log('Toggle called, current state:', voicePlayer.isPlaying);
             if (voicePlayer.hasFinished) {
                 replay();
             } else if (voicePlayer.isPlaying) {
@@ -931,17 +932,19 @@
         }
         
         function play() {
+            console.log('Play called');
             voicePlayer.isPlaying = true;
             voicePlayer.hasFinished = false;
             voicePlayer.startTime = Date.now() - (voicePlayer.pausedTime * 1000);
-            startVoiceTimer();
             updateVoiceUI();
+            startVoiceTimer();
         }
         
         function pause() {
+            console.log('Pause called');
+            stopVoiceTimer();
             voicePlayer.isPlaying = false;
             voicePlayer.pausedTime = voicePlayer.currentTime;
-            stopVoiceTimer();
             updateVoiceUI();
         }
         
