@@ -45,6 +45,8 @@
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             background: linear-gradient(180deg, rgb(20, 20, 20) 0%, rgb(13, 13, 13) 100%);
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 768px) {
@@ -61,6 +63,7 @@
             gap: 12px;
             padding: 20px 20px 0;
             margin-bottom: 15px;
+            padding-top: max(20px, env(safe-area-inset-top));
         }
         
         .profile-pic {
@@ -410,7 +413,8 @@
             text-align: center;
             color: rgba(128, 128, 128, 0.7);
             font-size: 11px;
-            margin-bottom: 15px;
+            margin-bottom: max(15px, env(safe-area-inset-bottom));
+            padding-bottom: 5px;
         }
         
         /* Full screen image viewer */
