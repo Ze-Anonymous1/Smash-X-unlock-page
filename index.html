@@ -213,7 +213,7 @@
         
         .media-counter {
             position: absolute;
-            top: 2.8%;
+            top: 8%;
             left: 3.8%;
             background: rgba(0, 0, 0, 0.6);
             padding: 6px 11px;
@@ -224,6 +224,22 @@
             align-items: center;
             gap: 5px;
             z-index: 3;
+        }
+        
+        .timer-warning {
+            position: absolute;
+            top: 2.8%;
+            left: 3.8%;
+            background: rgba(239, 68, 68, 0.8);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 500;
+            color: white;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         
         .price-badge {
@@ -639,6 +655,7 @@
                 <div class="image-slider" id="slider"></div>
                 
                 <div class="emoji-badge" id="emoji-badge">💋</div>
+                <div class="timer-warning">⏰ Link expires in 1 hour</div>
                 <div class="media-counter">
                     <svg viewBox="0 0 16 16" fill="white"><path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm5 2.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM3 12l3-3 2 2 3-3 3 3H3z"/></svg>
                     <span><span id="current-image">1</span>/<span id="total-images">0</span> media</span>
