@@ -1318,6 +1318,15 @@
             btn.innerHTML = '<span class="loading"></span>';
 
             try {
+                // Check if bundle is already unlocked
+                if (allUnlocked) {
+                    // Download bundle
+                    await downloadBundle();
+                    btn.disabled = false;
+                    btn.textContent = 'Unlock now';
+                    return;
+                }
+
                 const response = await fetch('https://nsqowxwwtmxvahhmigap.supabase.co/functions/v1/create-payment-intent', {
                     method: 'POST',
                     headers: {
@@ -1371,6 +1380,54 @@
                 btn.textContent = 'Unlock now';
             }
         });
+
+        async function downloadBundle() {
+            const SUPABASE_URL = 'https://nsqowxwwtmxvahhmigap.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zcW93eHd3dG14dmFoaG1pZ2FwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyOTQzOTksImV4cCI6MjA4NTg3MDM5OX0.9v6jvmt9XgVDD7YxPDUGwXO0vdkcjNVyYE73MTfHMF4';
+
+            try {
+                // Fetch all clean images for this bundle
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/processed_images?bundle_id=eq.${bundleId}&select=clean_storage_path`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+
+                const images = await response.json();
+
+                if (images.length === 0) {
+                    alert('No images found in bundle.');
+                    return;
+                }
+
+                // Download each image individually
+                for (let i = 0; i < images.length; i++) {
+                    const img = images[i];
+                    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/processed-images/${img.clean_storage_path}`;
+                    
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.href = publicUrl;
+                    link.download = `image-${i + 1}.jpg`;
+                    link.target = '_blank';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Stagger downloads to prevent browser blocking
+                    if (i < images.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                }
+
+                alert(`Downloading ${images.length} images! 🔥`);
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Error downloading bundle. Please contact support.');
+            }
+        }
 
         document.getElementById('submit-btn').addEventListener('click', async () => {
             const submitBtn = document.getElementById('submit-btn');
